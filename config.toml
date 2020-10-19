@@ -124,7 +124,7 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "R Project 3"
       subtitle = "Omega Group plc- Pay Discrimination"
-      image = projects/"project4.jpg"
+      image = "projects/project4.jpg"
       url = "projects/project4"
 
     #[[params.tiles.showcase]]
