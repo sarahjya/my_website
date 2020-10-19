@@ -1,0 +1,151 @@
+---
+title: "Session 2: Homework 1"
+author: "Group 7: Sarah Jiang, Danqing Sun, Lasse Munk, Shawn Wu, Pieter Vercruysse, Christian Pizzuti"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)    # scrape websites
+library(purrr)  
+library(lubridate) #to handle dates
+library(dplyr)
+library(patchwork)
+library(tidytext)
+```
+
+
+
+# Where Do People Drink The Most Beer, Wine And Spirits?
+
+In this section, we are going to discuss where people drink the most beer, wine and spirits.
+
+We we would like to install the package and data in the beginning.
+
+```{r, load_alcohol_data}
+#Install the fivethirtyeight package  - as the data used in the question, i.e."drinks" is part of the package 
+
+library(fivethirtyeight)
+data(drinks)
+
+```
+
+
+Before we start, we want to answer these questions: What are the variable types? Any missing values we should worry about? 
+
+```{r glimpse_skim_data}
+#Summarize the data
+glimpse(drinks)
+skim(drinks)
+
+```
+
+*Answer:*The variable type for "country" column is character. The variable type for "beer_servings", "spirit_servings" and "wine_servings" is integer. The variable type for "total_litres_of_pure_alcohol" is double. 
+There is no missing value in any of the columns.
+
+
+Here, we make a plot that shows the top 25 beer consuming countries first.
+
+```{r beer_plot}
+#Select the top 25 beer consuming countries
+beer_plot <- drinks %>%
+  arrange(desc(beer_servings)) %>%
+  select(country, beer_servings) %>% 
+  head(25)
+
+#Run the table
+beer_plot
+
+#Make the plot
+ggplot(beer_plot,aes(x=reorder(country,-beer_servings),y=beer_servings))+
+  labs(title = "Top 25 Beer Consuming Countries", x="Country", y = "Beer Servings")+
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  
+
+```
+
+Next, we make a plot that shows the top 25 wine consuming countries
+
+```{r wine_plot}
+
+#Select the top 25 wine consuming countries
+wine_plot <- drinks %>%
+  arrange(desc(wine_servings)) %>%
+  select(country, wine_servings) %>% 
+  head(25)
+
+#Run the table
+wine_plot
+
+#Make the plot
+ggplot(wine_plot,aes(x=reorder(country,-wine_servings),y=wine_servings))+
+  labs(title = "Top 25 Wine Consuming Countries", x="Country", y = "Wine Servings")+
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+Finally, we make a plot that shows the top 25 spirit consuming countries
+```{r spirit_plot}
+#Select the top 25 spirit consuming countries
+spirit_plot <- drinks %>%
+  arrange(desc(spirit_servings)) %>%
+  select(country, spirit_servings) %>% 
+  head(25)
+
+#Run the table
+spirit_plot
+
+#Make the plot
+ggplot(spirit_plot,aes(x=reorder(country,-spirit_servings),y=spirit_servings))+
+  labs(title = "Top 25 Spirit Consuming Countries", x="Country", y = "Spirit Servings")+
+  geom_bar(stat="identity")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+> TYPE YOUR ANSWER AFTER (AND OUTSIDE!) THIS BLOCKQUOTE.\
+We can see that people from European countries love to drink wine and beer the most, as we can see lot of European countries' name on the first 2 graphs. On the other hand, people from Russian-speaking area love to drink spirits the most, as many of these countries appeared on the third graph.
+We can also see that the popularity of each kind of alchohol is similar around the globe, as the average consumption of top 25 countris is similar. However, the differences of popularity among different countries seem to be the biggest in spirits and least in beer, as the standard deviation seems to be biggest in the spirit plot and least in the beer graph.
+
+
+

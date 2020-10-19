@@ -92,40 +92,40 @@ disqusShortname = ""
     # Display your showcases here.
     
     [[params.tiles.showcase]]
-      title = "Aliquam"
-      subtitle = "Ipsum Dolor Sit Amet"
-      image = "pic01.jpg"
-      url = "blogs/aliquam"
+      title = "Self Introduction"
+      subtitle = "My background and past experiences"
+      image = "project1.jpg"
+      url = "projects/project1"
 
     [[params.tiles.showcase]]
-      title = "Tempus"
-      subtitle = "Feugiat Amet Tempus"
-      image = "pic02.jpg"
-      url = "blogs/tempus"
+      title = "R Project 1"
+      subtitle = "Where Do People Drink The Most Beer, Wine And Spirits?"
+      image = "project2.jpg"
+      url = "projects/project2"
 
     [[params.tiles.showcase]]
-      title = "Magna"
-      subtitle = "Lorem Etiam Nullam"
-      image = "pic03.jpg"
-      url = "blogs/magna"
+      title = "R Project 2"
+      subtitle = "Life expectancy, GDP per capita, Primary school enrollment, Mortality rate and HIV prevalence"
+      image = "project3.jpg"
+      url = "projects/project3"
 
     [[params.tiles.showcase]]
-      title = "Ipsum"
-      subtitle = "Nisl Sed Aliquam"
-      image = "pic04.jpg"
-      url = "blogs/ipsum"
+      title = "R Project 3"
+      subtitle = "Omega Group plc- Pay Discrimination"
+      image = "project4.jpg"
+      url = "projects/project4"
 
-    [[params.tiles.showcase]]
-      title = "Consequat"
-      subtitle = "Ipsum Dolor Sit Amet"
-      image = "pic05.jpg"
-      url = "blogs/ipsum"
+    #[[params.tiles.showcase]]
+     # title = "Consequat"
+      #subtitle = "Ipsum Dolor Sit Amet"
+      #image = "pic05.jpg"
+      #url = "blogs/ipsum"
 
-    [[params.tiles.showcase]]
-      title = "Etiam"
-      subtitle = "Feugiat Amet Tempus"
-      image = "pic06.jpg"
-      url = "blogs/ipsum"
+   # [[params.tiles.showcase]]
+    #  title = "Etiam"
+     # subtitle = "Feugiat Amet Tempus"
+      #image = "pic06.jpg"
+      #url = "blogs/ipsum"
     # You can make more showcases by copy and pasting the code above
 
   [params.blog]
