@@ -60,7 +60,7 @@ disqusShortname = ""
 
     [[params.navigation.links]]
       name = "R Project 1"
-      url = "projects/project2
+      url = "projects/project2"
       
       [[params.navigation.links]]
       name = "R Project 2"
