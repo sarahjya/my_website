@@ -54,9 +54,6 @@ disqusShortname = ""
 
 #***** TBD**************
 
-    [[params.navigation.links]]
-      name = "R Project 1"
-      url = "projects/project1"
 
     [[params.navigation.links]]
       name = "R Project 1"
@@ -107,7 +104,7 @@ disqusShortname = ""
       title = "About Me"
       subtitle = "My background and past experiences"
       image = "projects/project1.jpg"
-      url = "projects/project1"
+      url = "blogs/aliquam"
 
     [[params.tiles.showcase]]
       title = "R Project 1"
@@ -118,7 +115,7 @@ disqusShortname = ""
     [[params.tiles.showcase]]
       title = "R Project 2"
       subtitle = "Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence"
-      image = "projects/project3.jpg"
+      image = "projects/project3.png"
       url = "projects/project3"
 
     [[params.tiles.showcase]]
@@ -153,7 +150,7 @@ disqusShortname = ""
     title = "Sarah (Yian) Jiang's website"
     subtitle = """Please enjoy exploring my website about me and my R projects."""   
     buttonText = "Get Started"
-    url = "blogs"
+    url = ""#""
 
 
   # Contact section
