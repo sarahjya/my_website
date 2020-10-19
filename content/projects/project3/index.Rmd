@@ -1,6 +1,6 @@
 ---
-title: "Session 4: Homework 2"
-author: "Your name goes here"
+title: "Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence"
+author: "Sarah Jiang"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -60,30 +60,18 @@ First, we use the `wbstats` package to download data from the World Bank and rea
 
 ```{r, get_data, cache=TRUE}
 
-# load gapminder HIV data
-hiv <- read_csv(here::here("data","adults_with_hiv_percent_age_15_49.csv"))
-life_expectancy <- read_csv(here::here("data","life_expectancy_years.csv"))
-
-# get World bank data using wbstats
-indicators <- c("SP.DYN.TFRT.IN","SE.PRM.NENR", "SH.DYN.MORT", "NY.GDP.PCAP.KD")
-
-
-library(wbstats)
-
-worldbank_data <- wb_data(country="countries_only", #countries only- no aggregates like Latin America, Europe, etc.
-                          indicator = indicators, 
-                          start_date = 1960, 
-                          end_date = 2016)
-
-# get a dataframe of information regarding countries, indicators, sources, regions, indicator topics, lending types, income levels,  from the World Bank API 
-countries <-  wbstats::wb_cachelist$countries
+# load gapminder HIV prevalence, life expectancy, worldbank, countries data
+hiv <- read_csv(here("adults_with_hiv_percent_age_15_49.csv"))
+life_expectancy <- read_csv(here("life_expectancy_years.csv"))
+worldbank_data <- read_csv(here("worldbank_data.csv"))
+countries <-  read_csv(here("countries.csv"))
 
 ```
 
 Next, we join the 3 dataframes (life_expectancy, worldbank_data, and HIV) into one. We tidy our data first and then perform. We chose inner join to as the joining method because we want to compare different variables. Therefore, if there is missing variable in the selected years, we would not be able to compare .
 
 ```{r}
-
+#Clean the original data for further usage
 tidy_HIV <- hiv %>% 
   pivot_longer(cols=2:34,names_to="Year",values_to="HIV_Prevalence")
 
@@ -100,13 +88,14 @@ tidy_HIV$Year <- as.numeric(tidy_HIV$Year)
 tidy_life_expectancy$Year <- as.numeric(tidy_life_expectancy$Year)
 
 
-
+#Join different sheets into 1 table
 joined_table1 <- inner_join(tidy_HIV,tidy_life_expectancy,by=c("Year","country"))
 joined_table <- inner_join(joined_table1,tidy_worldbank,by=c("Year","country"))
 joined_table <- joined_table[c(1,5,2,3,4,6,7,8,9)]
 
 joined_table
 
+#Summarize data
 summary(joined_table)
 skim(joined_table)
 ```
@@ -114,15 +103,17 @@ skim(joined_table)
 
 
 
-We found that HIV Prevalence negatively correlates with life expectancy. We can see from the first plot that except for Europe & Central Asia and North America region, life expectancy goes down as HIV prevalence goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense.
-```{r}
+> We found that HIV Prevalence negatively correlates with life expectancy. We can see from the first plot that except for Europe & Central Asia and North America region, life expectancy goes down as HIV prevalence goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense.
 
+```{r}
+#Analyze the relationship between HIV prevalence and life expectancy, faceted by region 
 ggplot(joined_table,aes(x=HIV_Prevalence, y =Life_Expectancy,na.rm=TRUE)) +
   geom_line()+
   facet_wrap(~region)+
   geom_smooth(method="lm")+
   labs(title = "HIV Prevalence Negatively Corelates to Life Expectancy",subtitle="The Relationship Between HIV Prevalence and Life Expectancy by Region",x="HIV Prevalence (%)",y="Life Expectancy")
 
+#Analyze the relationship between HIV prevalence and life expectancy, overall result 
 ggplot(joined_table,aes(x=HIV_Prevalence, y =Life_Expectancy,na.rm=TRUE)) +
   geom_line()+
   geom_smooth(method="lm")+
@@ -131,20 +122,25 @@ ggplot(joined_table,aes(x=HIV_Prevalence, y =Life_Expectancy,na.rm=TRUE)) +
 ```
 
 
-We found that fertility rate negatively correlates with GDP per capita. We can see from the first plot that except for North America region, GDP per capita goes down as fertility rate goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense - people from more developed countries tend to have fewer kids.
+> We found that fertility rate negatively correlates with GDP per capita. We can see from the first plot that except for North America region, GDP per capita goes down as fertility rate goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense - people from more developed countries tend to have fewer kids.
 
 ```{r}
 
+#Analyze the relationship between fertility rate and GDP per capita, faceted by region
 ggplot(joined_table,aes(x=Fertility_Rate, y =GDP_Per_Capita,na.rm=TRUE)) +
   geom_line()+
   facet_wrap(~region)+
   geom_smooth(method="lm")+
-  labs(title = "Fertility Rate Negatively Corelates with GDP per capita",subtitle="The Relationship Between Fertility Rate and GDP per capita by Region",x="Fertility Rate (%)",y="GDP Per Capita")
+  labs(title = "Fertility Rate Negatively Corelates with GDP per capita",subtitle="The Relationship Between Fertility Rate and GDP per capita by Region",x="Fertility Rate (%)",y="GDP Per Capita")+
+   coord_flip()
 
+
+#Analyze the relationship between fertility rate and GDP per capita, overall result
 ggplot(joined_table,aes(x=Fertility_Rate, y =GDP_Per_Capita,na.rm=TRUE)) +
   geom_line()+
   geom_smooth(method="lm")+
-  labs(title = "Fertility Rate Negatively Corelates with GDP per capita",subtitle="The Relationship Between Fertility Rate and GDP per capita",x="Fertility Rate (%)",y="GDP Per Capita")
+  labs(title = "Fertility Rate Negatively Corelates with GDP per capita",subtitle="The Relationship Between Fertility Rate and GDP per capita",x="Fertility Rate (%)",y="GDP Per Capita")+
+   coord_flip()
 
 
 ```
@@ -152,13 +148,18 @@ ggplot(joined_table,aes(x=Fertility_Rate, y =GDP_Per_Capita,na.rm=TRUE)) +
 As we realized that many HIV prevalence observaitons are missing, we drew a bar chart showing the number of missing observations in each reginon and presented it in descending order.
 
 ```{r}
+
+#Count the missing HIV data in each region
 miss_HIV <- joined_table %>% 
   group_by(region) %>% 
   summarize(miss_HIV=sum(is.na(HIV_Prevalence))) %>% 
+#Arrange the data in descending order by number of missing HIV data
   arrange(desc(miss_HIV))
-         
+
+#Run the table         
 miss_HIV
 
+#Make a plot to show the result, presenting in descending order
 ggplot(miss_HIV,aes(x=reorder(region,miss_HIV),y=miss_HIV))+
   geom_col()+
   labs(title="Regions with most missing HIV data in descending order",x="Region",y="Number of missed HIV data")+
@@ -169,46 +170,52 @@ ggplot(miss_HIV,aes(x=reorder(region,miss_HIV),y=miss_HIV))+
 We then analyzed how mortality rate for under 5 has changed by region. We drew a plot and found out that the mortality rate has declined as time went by. In each region, we also found the top 5 countries that have seen the greatest improvement, as well as those 5 countries where mortality rates have had the least improvement or even deterioration. The results are shown in the tables below.
 ```{r}
 
+#Calculate the average fertility rate
 mortality_change1 <- joined_table %>% 
   group_by(region,Year) %>% 
   summarise(average_mortality_rate=mean(Mortality_Rate)) 
   
-  
+#Draw a plot to see the overall trend of mortality rate  
 ggplot(mortality_change1,aes(x=Year, y =average_mortality_rate,na.rm=TRUE)) +
   geom_line()+
   geom_smooth(method="lm")+
   facet_wrap(~region)+
   labs(title = "Mortality Rate Delined as Time Went By", subtitle = "Trend of Average Mortality Rate", x= "Year", y="Average Mortality Rate")
 
-  
+#Calculate the change in mortality rate over the years by country  
 mortality_change2 <- joined_table %>% 
   group_by(region,country) %>% 
   mutate(Change_In_Mortality_Rate=Mortality_Rate-lag(Mortality_Rate,32)) %>% 
   filter(Year==2011) %>% 
   select(-c("Year")) 
 
+#Select the 5 least improvement countries in terms of mortality rate
 Least_Improvement <- mortality_change2 %>% 
   group_by(region) %>% 
   arrange(desc(region,change)) %>% 
   select(c(country,region,Change_In_Mortality_Rate)) %>% 
   top_n(5,Change_In_Mortality_Rate)
 
+#Run the table
 Least_Improvement
 
+#Select the 5 most improvement countries in terms of mortality rate
 Most_Improvement <- mortality_change2 %>% 
   group_by(region) %>% 
   arrange(region,Change_In_Mortality_Rate) %>% 
   select(c(country,region,Change_In_Mortality_Rate)) %>% 
   top_n(-5,Change_In_Mortality_Rate)
 
-mortality_change4
+#Run the table
+Most_Improvement
 
 
   
 
 ```
 
-We found that primary school enrollment negatively correlates with fertility rate. We can see from the first plot that except for Europe & Central Asia, primary school enrollment goes down as fertility rate goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense - as the education resouces are limited, less children go to school as fertility rate rise.
+> We found that primary school enrollment negatively correlates with fertility rate. We can see from the first plot that except for Europe & Central Asia, primary school enrollment goes down as fertility rate goes up. As we aggregate the data around the globe, we also see  the same pattern in the second plot. The result also congenial with our common sense - as the education resouces are limited, less children go to school as fertility rate rise.
+
 ```{r}
 
 ggplot(joined_table,aes(x=Fertility_Rate, y =School_Enrollment, na.rm=TRUE)) +

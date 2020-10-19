@@ -50,36 +50,28 @@ library(tidyquant)
 
 # Omega Group plc- Pay Discrimination
 ```{r}
-omega <- read_csv(here::here("data", "omega.csv"))
+omega <- read_csv(here("omega.csv"))
 glimpse(omega) # examine the data frame
 ```
 
 
 At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
 
-You are asked to carry out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
+Therefore, we carried out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
 
 ## Loading the data
 
 
 ```{r load_omega_data}
-omega <- read_csv(here::here("data", "omega.csv"))
+omega <- read_csv(here("omega.csv"))
 glimpse(omega) # examine the data frame
 ```
 
 ## Relationship Salary - Gender ?
 
-The data frame `omega`  contains the salaries for the sample of 50 executives in the company. Can you conclude that there is a significant difference between the salaries of the male and female executives?
+The data frame `omega`  contains the salaries for the sample of 50 executives in the company. We will try to conclude that there is a significant difference between the salaries of the male and female executives.
 
-Note that you can perform different types of analyses, and check whether they all lead to the same conclusion 
-
-.	Confidence intervals
-.	Hypothesis testing
-.	Correlation analysis
-.	Regression
-
-
-Calculate summary statistics on salary by gender. Also, create and print a dataframe where, for each gender, you show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% condifence interval
+We first calculate summary statistics on salary by gender. Also, create and print a dataframe where, for each gender, we show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% condifence interval
 
 ```{r, confint_single_valiables}
 # Summary Statistics of salary by gender
@@ -103,7 +95,7 @@ mosaic::favstats (salary ~ gender, data=omega)
 
 > From the summary table, we see that the average, median, min, max and quantile salary results all points to male executives having higher salaries than female ones. Therefore, according to the summary data, it is likely that male executives have significantly higher salary than females ones. From the second data frame, we can see that the 95% CI of male and female executive salaries do not overlap with each other. This indicates that male executives indeed have higher salaries.
 
-You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using `t.test()` and with the simulation method from the `infer` package.
+We also ran a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. 
 
 ```{r, hypothesis_testing}
 # hypothesis testing using t.test() 
@@ -156,7 +148,7 @@ favstats (experience ~ gender, data=omega)
 
 ```
 
-Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?  
+Based on this evidence, we try to  conclude whether there is a significant difference between the experience of the male and female executives.
 ```{r}
 
 # Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
@@ -219,7 +211,7 @@ The result male executives having more experience endangers the previous result 
 
 Someone at the meeting argues that clearly, a more thorough analysis of the relationship between salary and experience is required before any conclusion can be drawn about whether there is any gender-based salary discrimination in the company.
 
-Analyse the relationship between salary and experience. Draw a scatterplot to visually inspect the data
+We analysed the relationship between salary and experience and drew a scatterplot to visually inspect the data.
 
 
 ```{r, salary_exp_scatter}
@@ -240,7 +232,7 @@ ggplot(omega,aes(x=experience,y=salary))+
 >There is an obvious positive correlation between experience and salary, with the correlation value as high as 0.8. The degree of freedom is 48 and p-value is 2.257e-12 < 0.05(the p-value under df=48).Thus, the correlation between the two variables is significant. 
 
 ## Check correlations between the data
-You can use `GGally:ggpairs()` to create a scatterplot and correlation matrix. Essentially, we change the order our variables will appear in and have the dependent variable (Y), salary, as last in our list. We then pipe the dataframe to `ggpairs()` with `aes` arguments to colour by `gender` and make ths plots somewhat transparent (`alpha  = 0.3`).
+Lastly we used `GGally:ggpairs()` to create a scatterplot and correlation matrix.
 
 ```{r, ggpairs}
 omega %>% 

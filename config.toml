@@ -46,18 +46,30 @@ disqusShortname = ""
     [[params.navigation.links]]
       name = "Home"
       url = "#"
+#***** TBD**************
 
     [[params.navigation.links]]
-      name = "Blogs"
+      name = "About Me"
       url = "blogs"
 
-    [[params.navigation.links]]
-      name = "Generic Blog"
-      url = "blogs/ipsum"
+#***** TBD**************
 
     [[params.navigation.links]]
-      name = "Elements"
-      url = "elements.html"
+      name = "R Project 1"
+      url = "projects/project1"
+
+    [[params.navigation.links]]
+      name = "R Project 1"
+      url = "projects/project2
+      
+      [[params.navigation.links]]
+      name = "R Project 2"
+      url = "projects/project3"
+      
+      [[params.navigation.links]]
+      name = "R Project 3"
+      url = "projects/project4"
+
 
     # Add custom links here by uncommenting code below. To remove links just delete
     # the [[params.navigation.links]] map associated with that link. Copy and paste
@@ -82,7 +94,7 @@ disqusShortname = ""
     # To change the background image on the homepage banner, replace 'banner.jpg' in
     # the 'static/img' folder.
     title = "Hi, my name is Yian (Sarah) Jiang"
-    subtitle = "A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP\nAND RELEASED UNDER THE CREATIVE COMMONS."
+    subtitle = "My website introducing me and my R projects"
     buttonText = "Get Started"
 
 
@@ -92,27 +104,27 @@ disqusShortname = ""
     # Display your showcases here.
     
     [[params.tiles.showcase]]
-      title = "Self Introduction"
+      title = "About Me"
       subtitle = "My background and past experiences"
-      image = "project1.jpg"
+      image = "projects/project1.jpg"
       url = "projects/project1"
 
     [[params.tiles.showcase]]
       title = "R Project 1"
       subtitle = "Where Do People Drink The Most Beer, Wine And Spirits?"
-      image = "project2.jpg"
+      image = "projects/project2.jpg"
       url = "projects/project2"
 
     [[params.tiles.showcase]]
       title = "R Project 2"
-      subtitle = "Life expectancy, GDP per capita, Primary school enrollment, Mortality rate and HIV prevalence"
-      image = "project3.jpg"
+      subtitle = "Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence"
+      image = "projects/project3.jpg"
       url = "projects/project3"
 
     [[params.tiles.showcase]]
       title = "R Project 3"
       subtitle = "Omega Group plc- Pay Discrimination"
-      image = "project4.jpg"
+      image = projects/"project4.jpg"
       url = "projects/project4"
 
     #[[params.tiles.showcase]]
@@ -138,12 +150,8 @@ disqusShortname = ""
   # Section Type Two
   [params.two]
     enable = true
-    title = "Massa libero"
-    subtitle = """Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero. 
-    Mauris aliquet magna magna sed nunc rhoncus pharetra. 
-    Pellentesque condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor. 
-    Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis libero.
-    Mauris aliquet magna magna sed nunc rhoncus amet pharetra et feugiat tempus."""
+    title = "Sarah (Yian) Jiang's website"
+    subtitle = """Please enjoy exploring my website about me and my R projects."""   
     buttonText = "Get Started"
     url = "blogs"
 
