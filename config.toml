@@ -50,7 +50,7 @@ disqusShortname = ""
 
     [[params.navigation.links]]
       name = "About Me"
-      url = "projects/project 1"
+      url = "projects/project1"
 
 
 
@@ -103,7 +103,7 @@ disqusShortname = ""
       title = "About Me"
       subtitle = "My background and past experiences"
       image = "projects/project1.jpg"
-      url = "blogs/aliquam"
+      url = "projects/project1"
 
     [[params.tiles.showcase]]
       title = "R Project 1"
