@@ -1,0 +1,66 @@
+---
+title: "About Me"
+author: "Sarah Jiang"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+```{r}
+
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(lubridate)
+library(fivethirtyeight)
+library(here)
+library(skimr)
+library(janitor)
+library(vroom)
+library(tidyquant)
+library(rvest)    # scrape websites
+library(purrr)  
+library(lubridate) #to handle dates
+library(dplyr)
+library(patchwork)
+library(tidytext)
+library(knitr)
+
+```
+
+
+#About Me
+
+Hi Everyone! I am Sarah (Yian) Jiang. I am currently studying in Masters in Financial Analysis program at London Business School. I acquired a bachelor degree from Tsinghua University in accounting. I am currently pursuing a job in product management.
+
+To let you know more about me, I have attached my resume below. You can also reach out to me thorough the contacts shown in the homepage.
+
+
+```{r add_my_new_picture, echo=FALSE, out.width="90%"}
+knitr::include_graphics("/img/cv.jpg",error = FALSE)
+
+```
+
+
