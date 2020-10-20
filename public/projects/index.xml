@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Porfolio Website for Yian (Sarah) Jiang</title>
+    <link>/projects/</link>
+    <description>Recent content in Projects on Porfolio Website for Yian (Sarah) Jiang</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 20 Oct 2020 00:00:00 +0000</lastBuildDate><atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title> Omega Group plc- Pay Discrimination</title>
+      <link>/projects/project4/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/project4/</guid>
+      <description>Omega Group plc- Pay Discriminationomega &amp;lt;- read_csv(here(&amp;quot;omega.csv&amp;quot;))glimpse(omega) # examine the data frame## Rows: 50## Columns: 3## $ salary &amp;lt;dbl&amp;gt; 81894, 69517, 68589, 74881, 65598, 76840, 78800, 70033, ...## $ gender &amp;lt;chr&amp;gt; &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, &amp;quot;male&amp;quot;, ...## $ experience &amp;lt;dbl&amp;gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24...At the last board meeting of Omega Group Plc.</description>
+    </item>
+    
+    <item>
+      <title>About Me</title>
+      <link>/projects/project1/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/project1/</guid>
+      <description>About MeHi Everyone! I am Sarah (Yian) Jiang. I am currently studying in Masters in Financial Analysis program at London Business School. I acquired a bachelor degree from Tsinghua University in accounting. I am currently pursuing a job in product management.
+To let you know more about me, I have attached my resume below. You can also reach out to me thorough the contacts shown in the homepage.</description>
+    </item>
+    
+    <item>
+      <title>Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence</title>
+      <link>/projects/project3/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/project3/</guid>
+      <description>Gapminder revisitedIn this section, we will look at data on
+Life expectancy at birth (life_expectancy_years.csv)GDP per capita in constant 2010 US$ (https://data.worldbank.org/indicator/NY.GDP.PCAP.KD)Female fertility: The number of babies per woman (https://data.worldbank.org/indicator/SP.DYN.TFRT.IN)Primary school enrollment as % of children attending primary school (https://data.worldbank.org/indicator/SE.PRM.NENR)Mortality rate, for under 5, per 1000 live births (https://data.worldbank.org/indicator/SH.DYN.MORT)HIV prevalence (adults_with_hiv_percent_age_15_49.csv): The estimated number of people living with HIV per 100 population of age group 15-49.</description>
+    </item>
+    
+    <item>
+      <title>Where Do People Drink The Most Beer, Wine And Spirits?</title>
+      <link>/projects/project2/</link>
+      <pubDate>Tue, 20 Oct 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/projects/project2/</guid>
+      <description>Where Do People Drink The Most Beer, Wine And Spirits?In this analysis, we are going to discuss where people drink the most beer, wine and spirits.
+We we would like to install the package and load the original data in the beginning.
+#Install the fivethirtyeight package - as the data used i.e.&amp;quot;drinks&amp;quot; is part of the package library(fivethirtyeight)data(drinks)Before we start, we want to answer these questions: What are the variable types?</description>
+    </item>
+    
+  </channel>
+</rss>

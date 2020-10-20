@@ -1,0 +1,564 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="This is my portfolio website">
+	<meta name="author" content="Yian Jiang">
+	<meta name="generator" content="Hugo 0.75.1" />
+	<title>Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence &middot; Porfolio Website for Yian (Sarah) Jiang</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Sarah Jiang</strong> <span></span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/projects/project1">About Me</a></li>
+            
+                <li><a href="/projects/project2">R Project 1</a></li>
+            
+                <li><a href="/projects/project3">R Project 2</a></li>
+            
+                <li><a href="/projects/project4">R Project 3</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1>Life Expectancy, GDP per Capita, Primary School Enrollment, Mortality Rate and HIV Prevalence</h1>
+                            </header>
+                            
+                            
+
+
+<div id="gapminder-revisited" class="section level1">
+<h1>Gapminder revisited</h1>
+<p>In this section, we will look at data on</p>
+<ul>
+<li>Life expectancy at birth (life_expectancy_years.csv)</li>
+<li>GDP per capita in constant 2010 US$ (<a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.KD" class="uri">https://data.worldbank.org/indicator/NY.GDP.PCAP.KD</a>)</li>
+<li>Female fertility: The number of babies per woman (<a href="https://data.worldbank.org/indicator/SP.DYN.TFRT.IN" class="uri">https://data.worldbank.org/indicator/SP.DYN.TFRT.IN</a>)</li>
+<li>Primary school enrollment as % of children attending primary school (<a href="https://data.worldbank.org/indicator/SE.PRM.NENR" class="uri">https://data.worldbank.org/indicator/SE.PRM.NENR</a>)</li>
+<li>Mortality rate, for under 5, per 1000 live births (<a href="https://data.worldbank.org/indicator/SH.DYN.MORT" class="uri">https://data.worldbank.org/indicator/SH.DYN.MORT</a>)</li>
+<li>HIV prevalence (adults_with_hiv_percent_age_15_49.csv): The estimated number of people living with HIV per 100 population of age group 15-49.</li>
+</ul>
+<p>First, we use the <code>wbstats</code> package to download data from the World Bank and read HIV and Life Expectancy data from CSV files. The relevant World Bank indicators are <code>SP.DYN.TFRT.IN</code>, <code>SE.PRM.NENR</code>, <code>NY.GDP.PCAP.KD</code>, and <code>SH.DYN.MORT</code></p>
+<pre class="r"><code># load gapminder HIV prevalence, life expectancy, worldbank, countries data
+hiv &lt;- read_csv(here(&quot;adults_with_hiv_percent_age_15_49.csv&quot;))
+life_expectancy &lt;- read_csv(here(&quot;life_expectancy_years.csv&quot;))
+worldbank_data &lt;- read_csv(here(&quot;worldbank_data.csv&quot;))
+countries &lt;-  read_csv(here(&quot;countries.csv&quot;))</code></pre>
+<p>Next, we join the 3 dataframes (life_expectancy, worldbank_data, and HIV) into one. We tidy our data first and then perform. We chose inner join to as the joining method because we want to compare different variables. Therefore, if there is missing variable in the selected years, we would not be able to compare .</p>
+<pre class="r"><code>#Clean the original data for further usage
+tidy_HIV &lt;- hiv %&gt;% 
+  pivot_longer(cols=2:34,names_to=&quot;Year&quot;,values_to=&quot;HIV_Prevalence&quot;)
+
+tidy_life_expectancy &lt;- life_expectancy %&gt;% 
+  pivot_longer(cols=2:302,names_to=&quot;Year&quot;,values_to=&quot;Life_Expectancy&quot;)
+
+tidy_worldbank_1 &lt;- worldbank_data %&gt;% 
+  rename(Year=date,GDP_Per_Capita=NY.GDP.PCAP.KD,School_Enrollment=SE.PRM.NENR,Mortality_Rate=SH.DYN.MORT,Fertility_Rate=SP.DYN.TFRT.IN) 
+
+tidy_worldbank &lt;-inner_join(tidy_worldbank_1, countries,by=c(&quot;country&quot;,&quot;iso2c&quot;,&quot;iso3c&quot;)) %&gt;% 
+  select(c(&quot;country&quot;,&quot;region&quot;,&quot;Year&quot;,&quot;GDP_Per_Capita&quot;,&quot;School_Enrollment&quot;,&quot;Mortality_Rate&quot;,&quot;Fertility_Rate&quot;))
+
+tidy_HIV$Year &lt;- as.numeric(tidy_HIV$Year)
+tidy_life_expectancy$Year &lt;- as.numeric(tidy_life_expectancy$Year)
+
+
+#Join different sheets into 1 table
+joined_table1 &lt;- inner_join(tidy_HIV,tidy_life_expectancy,by=c(&quot;Year&quot;,&quot;country&quot;))
+joined_table &lt;- inner_join(joined_table1,tidy_worldbank,by=c(&quot;Year&quot;,&quot;country&quot;))
+joined_table &lt;- joined_table[c(1,5,2,3,4,6,7,8,9)]
+
+joined_table</code></pre>
+<pre><code>## # A tibble: 4,719 x 9
+##    country region  Year HIV_Prevalence Life_Expectancy GDP_Per_Capita
+##    &lt;chr&gt;   &lt;chr&gt;  &lt;dbl&gt;          &lt;dbl&gt;           &lt;dbl&gt;          &lt;dbl&gt;
+##  1 Afghan~ South~  1979             NA            44.4             NA
+##  2 Afghan~ South~  1980             NA            44.1             NA
+##  3 Afghan~ South~  1981             NA            44.9             NA
+##  4 Afghan~ South~  1982             NA            44.6             NA
+##  5 Afghan~ South~  1983             NA            42.8             NA
+##  6 Afghan~ South~  1984             NA            40.5             NA
+##  7 Afghan~ South~  1985             NA            42.4             NA
+##  8 Afghan~ South~  1986             NA            43.4             NA
+##  9 Afghan~ South~  1987             NA            45.5             NA
+## 10 Afghan~ South~  1988             NA            47.9             NA
+## # ... with 4,709 more rows, and 3 more variables: School_Enrollment &lt;dbl&gt;,
+## #   Mortality_Rate &lt;dbl&gt;, Fertility_Rate &lt;dbl&gt;</code></pre>
+<pre class="r"><code>#Summarize data
+summary(joined_table)</code></pre>
+<pre><code>##    country             region               Year      HIV_Prevalence
+##  Length:4719        Length:4719        Min.   :1979   Min.   : 0    
+##  Class :character   Class :character   1st Qu.:1987   1st Qu.: 0    
+##  Mode  :character   Mode  :character   Median :1995   Median : 0    
+##                                        Mean   :1995   Mean   : 2    
+##                                        3rd Qu.:2003   3rd Qu.: 1    
+##                                        Max.   :2011   Max.   :26    
+##                                                       NA&#39;s   :1602  
+##  Life_Expectancy GDP_Per_Capita   School_Enrollment Mortality_Rate
+##  Min.   : 9.6    Min.   :   164   Min.   : 14       Min.   :  2   
+##  1st Qu.:58.0    1st Qu.:   988   1st Qu.: 80       1st Qu.: 15   
+##  Median :68.9    Median :  3208   Median : 92       Median : 45   
+##  Mean   :66.3    Mean   : 10508   Mean   : 84       Mean   : 71   
+##  3rd Qu.:74.3    3rd Qu.: 11529   3rd Qu.: 96       3rd Qu.:112   
+##  Max.   :83.4    Max.   :111968   Max.   :100       Max.   :337   
+##                  NA&#39;s   :504      NA&#39;s   :2397      NA&#39;s   :36    
+##  Fertility_Rate
+##  Min.   :1.08  
+##  1st Qu.:1.91  
+##  Median :3.13  
+##  Mean   :3.71  
+##  3rd Qu.:5.50  
+##  Max.   :8.46  
+##  NA&#39;s   :17</code></pre>
+<pre class="r"><code>skim(joined_table)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-1">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">joined_table</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4719</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">9</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">2</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">7</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">country</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">143</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">region</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="16%" />
+<col width="9%" />
+<col width="13%" />
+<col width="8%" />
+<col width="8%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="8%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">1995.00</td>
+<td align="right">9.52</td>
+<td align="right">1979.00</td>
+<td align="right">1987.00</td>
+<td align="right">1995.00</td>
+<td align="right">2003.0</td>
+<td align="right">2.01e+03</td>
+<td align="left">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td align="left">HIV_Prevalence</td>
+<td align="right">1602</td>
+<td align="right">0.66</td>
+<td align="right">1.68</td>
+<td align="right">3.89</td>
+<td align="right">0.01</td>
+<td align="right">0.10</td>
+<td align="right">0.30</td>
+<td align="right">1.2</td>
+<td align="right">2.65e+01</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Life_Expectancy</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">66.27</td>
+<td align="right">9.87</td>
+<td align="right">9.64</td>
+<td align="right">58.00</td>
+<td align="right">68.90</td>
+<td align="right">74.3</td>
+<td align="right">8.34e+01</td>
+<td align="left">▁▁▂▆▇</td>
+</tr>
+<tr class="even">
+<td align="left">GDP_Per_Capita</td>
+<td align="right">504</td>
+<td align="right">0.89</td>
+<td align="right">10508.46</td>
+<td align="right">16099.16</td>
+<td align="right">164.19</td>
+<td align="right">988.24</td>
+<td align="right">3208.22</td>
+<td align="right">11529.0</td>
+<td align="right">1.12e+05</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">School_Enrollment</td>
+<td align="right">2397</td>
+<td align="right">0.49</td>
+<td align="right">83.81</td>
+<td align="right">18.71</td>
+<td align="right">13.52</td>
+<td align="right">79.52</td>
+<td align="right">91.57</td>
+<td align="right">96.4</td>
+<td align="right">1.00e+02</td>
+<td align="left">▁▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td align="left">Mortality_Rate</td>
+<td align="right">36</td>
+<td align="right">0.99</td>
+<td align="right">71.17</td>
+<td align="right">68.61</td>
+<td align="right">2.50</td>
+<td align="right">14.70</td>
+<td align="right">45.40</td>
+<td align="right">111.7</td>
+<td align="right">3.37e+02</td>
+<td align="left">▇▃▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Fertility_Rate</td>
+<td align="right">17</td>
+<td align="right">1.00</td>
+<td align="right">3.71</td>
+<td align="right">1.96</td>
+<td align="right">1.08</td>
+<td align="right">1.91</td>
+<td align="right">3.13</td>
+<td align="right">5.5</td>
+<td align="right">8.46e+00</td>
+<td align="left">▇▅▃▃▁</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>We found that HIV Prevalence negatively correlates with life expectancy. We can see from the first plot that except for Europe &amp; Central Asia and North America region, life expectancy goes down as HIV prevalence goes up. As we aggregate the data around the globe, we also see the same pattern in the second plot. The result also congenial with our common sense.</p>
+</blockquote>
+<pre class="r"><code>#Analyze the relationship between HIV prevalence and life expectancy, faceted by region 
+ggplot(joined_table,aes(x=HIV_Prevalence, y =Life_Expectancy,na.rm=TRUE)) +
+  geom_line()+
+  facet_wrap(~region)+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;HIV Prevalence Negatively Corelates to Life Expectancy&quot;,subtitle=&quot;The Relationship Between HIV Prevalence and Life Expectancy by Region&quot;,x=&quot;HIV Prevalence (%)&quot;,y=&quot;Life Expectancy&quot;)</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-2-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Analyze the relationship between HIV prevalence and life expectancy, overall result 
+ggplot(joined_table,aes(x=HIV_Prevalence, y =Life_Expectancy,na.rm=TRUE)) +
+  geom_line()+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;HIV Prevalence Negatively Corelates to Life Expectancy&quot;,subtitle=&quot;The Relationship Between HIV Prevalence and Life Expectancy&quot;,x=&quot;HIV Prevalence (%)&quot;,y=&quot;Life Expectancy&quot;)</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-2-2.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>We found that fertility rate negatively correlates with GDP per capita. We can see from the first plot that except for North America region, GDP per capita goes down as fertility rate goes up. As we aggregate the data around the globe, we also see the same pattern in the second plot. The result also congenial with our common sense - people from more developed countries tend to have fewer kids.</p>
+</blockquote>
+<pre class="r"><code>#Analyze the relationship between fertility rate and GDP per capita, faceted by region
+ggplot(joined_table,aes(x=Fertility_Rate, y =GDP_Per_Capita,na.rm=TRUE)) +
+  geom_line()+
+  facet_wrap(~region)+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;Fertility Rate Negatively Corelates with GDP per capita&quot;,subtitle=&quot;The Relationship Between Fertility Rate and GDP per capita by Region&quot;,x=&quot;Fertility Rate (%)&quot;,y=&quot;GDP Per Capita&quot;)+
+   coord_flip()</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Analyze the relationship between fertility rate and GDP per capita, overall result
+ggplot(joined_table,aes(x=Fertility_Rate, y =GDP_Per_Capita,na.rm=TRUE)) +
+  geom_line()+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;Fertility Rate Negatively Corelates with GDP per capita&quot;,subtitle=&quot;The Relationship Between Fertility Rate and GDP per capita&quot;,x=&quot;Fertility Rate (%)&quot;,y=&quot;GDP Per Capita&quot;)+
+   coord_flip()</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-3-2.png" width="648" style="display: block; margin: auto;" /></p>
+<p>As we realized that many HIV prevalence observaitons are missing, we drew a bar chart showing the number of missing observations in each reginon and presented it in descending order.</p>
+<pre class="r"><code>#Count the missing HIV data in each region
+miss_HIV &lt;- joined_table %&gt;% 
+  group_by(region) %&gt;% 
+  summarize(miss_HIV=sum(is.na(HIV_Prevalence))) %&gt;% 
+#Arrange the data in descending order by number of missing HIV data
+  arrange(desc(miss_HIV))
+
+#Run the table         
+miss_HIV</code></pre>
+<pre><code>## # A tibble: 7 x 2
+##   region                     miss_HIV
+##   &lt;chr&gt;                         &lt;int&gt;
+## 1 Sub-Saharan Africa              497
+## 2 Europe &amp; Central Asia           435
+## 3 Latin America &amp; Caribbean       258
+## 4 East Asia &amp; Pacific             179
+## 5 South Asia                      108
+## 6 Middle East &amp; North Africa      105
+## 7 North America                    20</code></pre>
+<pre class="r"><code>#Make a plot to show the result, presenting in descending order
+ggplot(miss_HIV,aes(x=reorder(region,miss_HIV),y=miss_HIV))+
+  geom_col()+
+  labs(title=&quot;Regions with most missing HIV data in descending order&quot;,x=&quot;Region&quot;,y=&quot;Number of missed HIV data&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-4-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>We then analyzed how mortality rate for under 5 has changed by region. We drew a plot and found out that the mortality rate has declined as time went by. In each region, we also found the top 5 countries that have seen the greatest improvement, as well as those 5 countries where mortality rates have had the least improvement or even deterioration. The results are shown in the tables below.</p>
+<pre class="r"><code>#Calculate the average fertility rate
+mortality_change1 &lt;- joined_table %&gt;% 
+  group_by(region,Year) %&gt;% 
+  summarise(average_mortality_rate=mean(Mortality_Rate)) 
+  
+#Draw a plot to see the overall trend of mortality rate  
+ggplot(mortality_change1,aes(x=Year, y =average_mortality_rate,na.rm=TRUE)) +
+  geom_line()+
+  geom_smooth(method=&quot;lm&quot;)+
+  facet_wrap(~region)+
+  labs(title = &quot;Mortality Rate Delined as Time Went By&quot;, subtitle = &quot;Trend of Average Mortality Rate&quot;, x= &quot;Year&quot;, y=&quot;Average Mortality Rate&quot;)</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-5-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Calculate the change in mortality rate over the years by country  
+mortality_change2 &lt;- joined_table %&gt;% 
+  group_by(region,country) %&gt;% 
+  mutate(Change_In_Mortality_Rate=Mortality_Rate-lag(Mortality_Rate,32)) %&gt;% 
+  filter(Year==2011) %&gt;% 
+  select(-c(&quot;Year&quot;)) 
+
+#Select the 5 least improvement countries in terms of mortality rate
+Least_Improvement &lt;- mortality_change2 %&gt;% 
+  group_by(region) %&gt;% 
+  arrange(desc(region,change)) %&gt;% 
+  select(c(country,region,Change_In_Mortality_Rate)) %&gt;% 
+  top_n(5,Change_In_Mortality_Rate)
+
+#Run the table
+Least_Improvement</code></pre>
+<pre><code>## # A tibble: 32 x 3
+## # Groups:   region [7]
+##    country                  region             Change_In_Mortality_Rate
+##    &lt;chr&gt;                    &lt;chr&gt;                                 &lt;dbl&gt;
+##  1 Botswana                 Sub-Saharan Africa                    -40.5
+##  2 Central African Republic Sub-Saharan Africa                    -44.3
+##  3 Lesotho                  Sub-Saharan Africa                    -33.7
+##  4 Mauritius                Sub-Saharan Africa                    -29.2
+##  5 Zimbabwe                 Sub-Saharan Africa                    -28.6
+##  6 Bangladesh               South Asia                           -157. 
+##  7 India                    South Asia                           -118. 
+##  8 Maldives                 South Asia                           -146. 
+##  9 Pakistan                 South Asia                            -81.8
+## 10 Sri Lanka                South Asia                            -38.6
+## # ... with 22 more rows</code></pre>
+<pre class="r"><code>#Select the 5 most improvement countries in terms of mortality rate
+Most_Improvement &lt;- mortality_change2 %&gt;% 
+  group_by(region) %&gt;% 
+  arrange(region,Change_In_Mortality_Rate) %&gt;% 
+  select(c(country,region,Change_In_Mortality_Rate)) %&gt;% 
+  top_n(-5,Change_In_Mortality_Rate)
+
+#Run the table
+Most_Improvement</code></pre>
+<pre><code>## # A tibble: 32 x 3
+## # Groups:   region [7]
+##    country          region                Change_In_Mortality_Rate
+##    &lt;chr&gt;            &lt;chr&gt;                                    &lt;dbl&gt;
+##  1 Cambodia         East Asia &amp; Pacific                     -166. 
+##  2 Mongolia         East Asia &amp; Pacific                     -138. 
+##  3 Indonesia        East Asia &amp; Pacific                      -91.7
+##  4 Myanmar          East Asia &amp; Pacific                      -82.2
+##  5 Papua New Guinea East Asia &amp; Pacific                      -52.5
+##  6 Turkey           Europe &amp; Central Asia                   -117. 
+##  7 Uzbekistan       Europe &amp; Central Asia                    -94.8
+##  8 Tajikistan       Europe &amp; Central Asia                    -88.1
+##  9 Kyrgyz Republic  Europe &amp; Central Asia                    -74.9
+## 10 Armenia          Europe &amp; Central Asia                    -58.6
+## # ... with 22 more rows</code></pre>
+<blockquote>
+<p>We found that primary school enrollment negatively correlates with fertility rate. We can see from the first plot that except for Europe &amp; Central Asia, primary school enrollment goes down as fertility rate goes up. As we aggregate the data around the globe, we also see the same pattern in the second plot. The result also congenial with our common sense - as the education resouces are limited, less children go to school as fertility rate rise.</p>
+</blockquote>
+<pre class="r"><code>ggplot(joined_table,aes(x=Fertility_Rate, y =School_Enrollment, na.rm=TRUE)) +
+  geom_line()+
+  facet_wrap(~region)+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;School Enrollment Negatively Corelates with Fertility Rate&quot;,subtitle=&quot;The Relationship Between School Enrollment and Fertility Rate by Region&quot;,x=&quot;Fertility Rate&quot;,y=&quot;School Enrollment&quot;)</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-6-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(joined_table,aes(x=Fertility_Rate, y =School_Enrollment, na.rm=TRUE)) +
+  geom_line()+
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(title = &quot;School Enrollment Negatively Corelates with Fertility Rate&quot;,subtitle=&quot;The Relationship Between School Enrollment and Fertility Rate&quot;,x=&quot;Fertility Rate&quot;,y=&quot;School Enrollment&quot;)</code></pre>
+<p><img src="/projects/project3/index_files/figure-html/unnamed-chunk-6-2.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://www.facebook.com/sarahjya/" class="icon alt fa-facebook" target="_blank"><span class="label">Facebook</span></a></li>
+                
+                    <li><a href="https://www.instagram.com/sarahkkjya/" class="icon alt fa-instagram" target="_blank"><span class="label">Instagram</span></a></li>
+                
+                    <li><a href="https://github.com/sarahjya" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/in/yian-jiang-6ba028171/?locale=en_US" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Sarah Jiang</li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>

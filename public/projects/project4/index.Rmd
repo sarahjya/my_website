@@ -1,0 +1,247 @@
+---
+title: " Omega Group plc- Pay Discrimination"
+author: "Sarha Jiang & Helen Sun"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+```{r, setup, echo=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE, 
+  warning = FALSE, 
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+options(digits = 3)
+
+# default figure size
+knitr::opts_chunk$set(
+  fig.width=6.75, 
+  fig.height=6.75,
+  fig.align = "center"
+)
+```
+
+
+```{r load-libraries, echo=FALSE}
+library(tidyverse)  # Load ggplot2, dplyr, and all the other tidyverse packages
+library(mosaic)
+library(ggthemes)
+library(GGally)
+library(readxl)
+library(here)
+library(skimr)
+library(janitor)
+library(broom)
+library(tidyquant)
+library(infer)
+library(openintro)
+library(tidyquant)
+```
+
+
+
+# Omega Group plc- Pay Discrimination
+```{r}
+omega <- read_csv(here("omega.csv"))
+glimpse(omega) # examine the data frame
+```
+
+
+At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted. 
+
+Therefore, we carried out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor. 
+
+## Loading the data
+
+
+```{r load_omega_data}
+omega <- read_csv(here("omega.csv"))
+glimpse(omega) # examine the data frame
+```
+
+## Relationship Salary - Gender ?
+
+The data frame `omega`  contains the salaries for the sample of 50 executives in the company. We will try to conclude that there is a significant difference between the salaries of the male and female executives.
+
+We first calculate summary statistics on salary by gender. Also, create and print a dataframe where, for each gender, we show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% condifence interval
+
+```{r, confint_single_valiables}
+# Summary Statistics of salary by gender
+mosaic::favstats (salary ~ gender, data=omega)
+
+# Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+  omega %>%
+  group_by(gender) %>% 
+  summarise(mean_salary = mean(salary),
+            sd_salary = sd(salary),
+            sample_size=n(),
+# the t-critical value, the standard error, the margin of error, 
+            t_critical=qt(0.975,sample_size-1),
+            se_salary=(sd(salary)/sqrt(sample_size)),
+            margin_se=t_critical*se_salary,
+# and the low/high endpoints of a 95% confidence interval
+            salary_low=mean_salary-margin_se,
+            salary_high=mean_salary+margin_se)
+
+```
+
+> From the summary table, we see that the average, median, min, max and quantile salary results all points to male executives having higher salaries than female ones. Therefore, according to the summary data, it is likely that male executives have significantly higher salary than females ones. From the second data frame, we can see that the 95% CI of male and female executive salaries do not overlap with each other. This indicates that male executives indeed have higher salaries.
+
+We also ran a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. 
+
+```{r, hypothesis_testing}
+# hypothesis testing using t.test() 
+t.test(salary~gender,data=omega)
+
+# hypothesis testing using infer package
+set.seed(1212)
+salary_in_null_world <- omega %>% 
+  #specify the variable of interest
+  specify(salary~gender) %>% 
+  #Hypothesize a null of no difference
+  hypothesise(null="independence") %>% 
+  #Generate a bunch of simulated samples
+  generate(reps = 1000, type="permute") %>% 
+  #Find the mean difference of each sample
+  calculate(stat="diff in means",
+            order = c("female","male"))
+
+#Visualize data and check where the observed sample difference '-8700' falls
+salary_in_null_world %>% visualize() + 
+  shade_ci(endpoints=c(-Inf,-8700),fill = "khaki")+
+  labs(title='Difference in Female and Male Employee Salary 
+in a world where there is  really no difference',
+       subtitle = 'Observed difference marked in green',
+        y='Count',
+        x='Average Female-Average Male'
+      )+
+  theme_bw()+
+  NULL
+
+#Calculate a p-value, or the probability that we would see the green line at
+
+salary_in_null_world %>% 
+  get_pvalue(obs_stat = -8700,direction = "both")
+
+
+```
+
+
+> From t-test, we can see that the 95% CI range is negative and does not include zero.The p-value 2e-4 is also very small. This indicates that male excutives indeed have higher salaries. With the simulation method, we can see from the plot that the observed difference falls in the far left of the plot. We also calculated a p-value of 0.002, which is again very small. This result indicates that male excutives indeed have higher salaries as well.
+
+
+## Relationship Experience - Gender?
+
+At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).
+
+```{r, experience_stats}
+# Summary Statistics of salary by gender
+favstats (experience ~ gender, data=omega)
+
+```
+
+Based on this evidence, we try to  conclude whether there is a significant difference between the experience of the male and female executives.
+```{r}
+
+# Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+omega %>% 
+  group_by(gender) %>% 
+  summarise(mean_experience = mean(experience),
+            sd_experience = sd(experience),
+            sample_size=n(),
+# the t-critical value, the standard error, the margin of error, 
+            t_critical=qt(0.975,sample_size-1),
+            se_experience=(sd(experience)/sqrt(sample_size)),
+            margin_se=t_critical*se_experience,
+# and the low/high endpoints of a 95% condifence interval
+            experience_low=mean_experience-margin_se,
+            experience_high=mean_experience+margin_se)
+
+```
+> From the summary table, we see that the average, median, min, max and quantile experience results all points to male executives having more experience than female ones. Therefore, according to the summary data, it is likely that male executives have significantly more experience than females ones. From the second data frame, we can see that the 95% CI of male and female executive experience do not overlap with each other. This indicates that male executives indeed have more experience.
+
+```{r}
+# hypothesis testing using t.test() 
+t.test(experience~gender,data=omega)
+
+
+# hypothesis testing using infer package
+set.seed(1212)
+experience_in_null_world <- omega %>% 
+  #specify the variable of interest
+  specify(experience~gender) %>% 
+  #Hypothesize a null of no difference
+  hypothesise(null="independence") %>% 
+  #Generate a bunch of simulated samples
+  generate(reps = 1000, type="permute") %>% 
+  #Find the mean difference of each sample
+  calculate(stat="diff in means",
+            order = c("female","male"))
+
+#Visualize data and check where the observed sample difference falls
+obs_diff_exp=7.38-21.12
+experience_in_null_world %>% visualize() + 
+  shade_ci(endpoints=c(-Inf,obs_diff_exp),fill = "khaki")+
+  labs(title='Difference in Female and Male Employee Experience
+in a world where there is  really no difference',
+       subtitle = 'Observed difference marked in green',
+        y='Count',
+        x='Average Female-Average Male')+
+  theme_bw()+
+  NULL
+
+#Calculate a p-value, or the probability that we would see the green line at
+experience_in_null_world %>% 
+  get_pvalue(obs_stat = obs_diff_exp,direction = "both")
+
+```
+
+> From t-test, we can see that the 95% CI range is negative and does not include zero.The p-value 1e-05 is also very small. This indicates that male excutives indeed have more experience. With the simulation method, we can see from the plot that the observed difference falls in the far left of the plot. We also calculated a p-value of almost zero, which is again very small. This result indicates that male excutives indeed have more experience as well. 
+The result male executives having more experience endangers the previous result - male executives have higher salaries. For now it is possible that the salary differences result from experience gap instead gender difference.
+
+## Relationship Salary - Experience ?
+
+Someone at the meeting argues that clearly, a more thorough analysis of the relationship between salary and experience is required before any conclusion can be drawn about whether there is any gender-based salary discrimination in the company.
+
+We analysed the relationship between salary and experience and drew a scatterplot to visually inspect the data.
+
+
+```{r, salary_exp_scatter}
+#correlation test between salary and experience
+cor.test(omega$salary,omega$experience,method="pearson")
+
+#visualize the data
+library(ggpubr)
+ggplot(omega,aes(x=experience,y=salary))+
+  theme_bw()+
+  labs(x="Experience/Year(s)",y="Salary/Dollars")+
+  geom_point()+
+  stat_smooth(method="lm",se=TRUE,color="darkblue")+
+  stat_cor(method = "pearson")
+
+```
+
+>There is an obvious positive correlation between experience and salary, with the correlation value as high as 0.8. The degree of freedom is 48 and p-value is 2.257e-12 < 0.05(the p-value under df=48).Thus, the correlation between the two variables is significant. 
+
+## Check correlations between the data
+Lastly we used `GGally:ggpairs()` to create a scatterplot and correlation matrix.
+
+```{r, ggpairs}
+omega %>% 
+  select(gender, experience, salary) %>% #order variables they will appear in ggpairs()
+  ggpairs(aes(colour=gender, alpha = 0.3))+
+  theme_bw()
+```
+
+
+>The group of females as a whole has less experience in work compared to the group of males. And there exists a significant positive correlation between experience  and salary both in females and males. Thus, the gap between avarage salary of males and females is mostly caused by the experience difference group.
+From the scatterplot, we can see that females with similar experience to males tend to have similar salaries either. We can infer that discrimination is not the major, at least not only factor, that results in the salary difference in the two groups.
+

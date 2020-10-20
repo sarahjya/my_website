@@ -1,0 +1,269 @@
+---
+title: "Where Do People Drink The Most Beer, Wine And Spirits?"
+author: "Sarah Jiang"
+date: "2020-10-20"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+
+<div id="where-do-people-drink-the-most-beer-wine-and-spirits" class="section level1">
+<h1>Where Do People Drink The Most Beer, Wine And Spirits?</h1>
+<p>In this analysis, we are going to discuss where people drink the most beer, wine and spirits.</p>
+<p>We we would like to install the package and load the original data in the beginning.</p>
+<pre class="r"><code>#Install the fivethirtyeight package  - as the data used i.e.&quot;drinks&quot; is part of the package 
+
+library(fivethirtyeight)
+data(drinks)</code></pre>
+<p>Before we start, we want to answer these questions: What are the variable types? Any missing values we should worry about?</p>
+<pre class="r"><code>#Summarize the data
+glimpse(drinks)</code></pre>
+<pre><code>## Rows: 193
+## Columns: 5
+## $ country                      &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Albania&quot;, &quot;Algeria&quot;, &quot;...
+## $ beer_servings                &lt;int&gt; 0, 89, 25, 245, 217, 102, 193, 21, 261...
+## $ spirit_servings              &lt;int&gt; 0, 132, 0, 138, 57, 128, 25, 179, 72, ...
+## $ wine_servings                &lt;int&gt; 0, 54, 14, 312, 45, 45, 221, 11, 212, ...
+## $ total_litres_of_pure_alcohol &lt;dbl&gt; 0.0, 4.9, 0.7, 12.4, 5.9, 4.9, 8.3, 3....</code></pre>
+<pre class="r"><code>skim(drinks)</code></pre>
+<table>
+<caption>(#tab:glimpse_skim_data)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">drinks</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">193</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">4</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">country</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">193</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">beer_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">106.16</td>
+<td align="right">101.14</td>
+<td align="right">0</td>
+<td align="right">20.0</td>
+<td align="right">76.0</td>
+<td align="right">188.0</td>
+<td align="right">376.0</td>
+<td align="left">▇▃▂▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">spirit_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">80.99</td>
+<td align="right">88.28</td>
+<td align="right">0</td>
+<td align="right">4.0</td>
+<td align="right">56.0</td>
+<td align="right">128.0</td>
+<td align="right">438.0</td>
+<td align="left">▇▃▂▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">wine_servings</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">49.45</td>
+<td align="right">79.70</td>
+<td align="right">0</td>
+<td align="right">1.0</td>
+<td align="right">8.0</td>
+<td align="right">59.0</td>
+<td align="right">370.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">total_litres_of_pure_alcohol</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4.72</td>
+<td align="right">3.77</td>
+<td align="right">0</td>
+<td align="right">1.3</td>
+<td align="right">4.2</td>
+<td align="right">7.2</td>
+<td align="right">14.4</td>
+<td align="left">▇▃▅▃▁</td>
+</tr>
+</tbody>
+</table>
+<p><em>Answer:</em>The variable type for “country” column is character. The variable type for “beer_servings”, “spirit_servings” and “wine_servings” is integer. The variable type for “total_litres_of_pure_alcohol” is double.
+There is no missing value in any of the columns.</p>
+<p>Here, we make a plot that shows the top 25 beer consuming countries first.</p>
+<pre class="r"><code>#Select the top 25 beer consuming countries
+beer_plot &lt;- drinks %&gt;%
+  arrange(desc(beer_servings)) %&gt;%
+  select(country, beer_servings) %&gt;% 
+  head(25)
+
+#Run the table
+beer_plot</code></pre>
+<pre><code>## # A tibble: 25 x 2
+##    country        beer_servings
+##    &lt;chr&gt;                  &lt;int&gt;
+##  1 Namibia                  376
+##  2 Czech Republic           361
+##  3 Gabon                    347
+##  4 Germany                  346
+##  5 Lithuania                343
+##  6 Poland                   343
+##  7 Venezuela                333
+##  8 Ireland                  313
+##  9 Palau                    306
+## 10 Romania                  297
+## # ... with 15 more rows</code></pre>
+<pre class="r"><code>#Make the plot
+ggplot(beer_plot,aes(x=reorder(country,beer_servings),y=beer_servings))+
+  labs(title = &quot;Top 25 Beer Consuming Countries&quot;, x=&quot;Country&quot;, y = &quot;Beer Servings&quot;)+
+  geom_bar(stat=&quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/projects/project2/index_files/figure-html/beer_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Next, we make a plot that shows the top 25 wine consuming countries</p>
+<pre class="r"><code>#Select the top 25 wine consuming countries
+wine_plot &lt;- drinks %&gt;%
+  arrange(desc(wine_servings)) %&gt;%
+  select(country, wine_servings) %&gt;% 
+  head(25)
+
+#Run the table
+wine_plot</code></pre>
+<pre><code>## # A tibble: 25 x 2
+##    country           wine_servings
+##    &lt;chr&gt;                     &lt;int&gt;
+##  1 France                      370
+##  2 Portugal                    339
+##  3 Andorra                     312
+##  4 Switzerland                 280
+##  5 Denmark                     278
+##  6 Slovenia                    276
+##  7 Luxembourg                  271
+##  8 Croatia                     254
+##  9 Italy                       237
+## 10 Equatorial Guinea           233
+## # ... with 15 more rows</code></pre>
+<pre class="r"><code>#Make the plot
+ggplot(wine_plot,aes(x=reorder(country,wine_servings),y=wine_servings))+
+  labs(title = &quot;Top 25 Wine Consuming Countries&quot;, x=&quot;Country&quot;, y = &quot;Wine Servings&quot;)+
+  geom_bar(stat=&quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/projects/project2/index_files/figure-html/wine_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Finally, we make a plot that shows the top 25 spirit consuming countries</p>
+<pre class="r"><code>#Select the top 25 spirit consuming countries
+spirit_plot &lt;- drinks %&gt;%
+  arrange(desc(spirit_servings)) %&gt;%
+  select(country, spirit_servings) %&gt;% 
+  head(25)
+
+#Run the table
+spirit_plot</code></pre>
+<pre><code>## # A tibble: 25 x 2
+##    country            spirit_servings
+##    &lt;chr&gt;                        &lt;int&gt;
+##  1 Grenada                        438
+##  2 Belarus                        373
+##  3 Haiti                          326
+##  4 Russian Federation             326
+##  5 St. Lucia                      315
+##  6 Guyana                         302
+##  7 Slovakia                       293
+##  8 Dominica                       286
+##  9 Thailand                       258
+## 10 Cook Islands                   254
+## # ... with 15 more rows</code></pre>
+<pre class="r"><code>#Make the plot
+ggplot(spirit_plot,aes(x=reorder(country,spirit_servings),y=spirit_servings))+
+  labs(title = &quot;Top 25 Spirit Consuming Countries&quot;, x=&quot;Country&quot;, y = &quot;Spirit Servings&quot;)+
+  geom_bar(stat=&quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/projects/project2/index_files/figure-html/spirit_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>We can see that people from European countries love to drink wine and beer the most, as we can see lot of European countries’ name on the first 2 graphs. On the other hand, people from Russian-speaking area love to drink spirits the most, as many of these countries appeared on the third graph.
+We can also see that the popularity of each kind of alchohol is similar around the globe, as the average consumption of top 25 countris is similar. However, the differences of popularity among different countries seem to be the biggest in spirits and least in beer, as the standard deviation seems to be biggest in the spirit plot and least in the beer graph.</p>
+</blockquote>
+</div>

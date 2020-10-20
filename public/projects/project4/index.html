@@ -1,0 +1,365 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="This is my portfolio website">
+	<meta name="author" content="Yian Jiang">
+	<meta name="generator" content="Hugo 0.75.1" />
+	<title> Omega Group plc- Pay Discrimination &middot; Porfolio Website for Yian (Sarah) Jiang</title>
+	<!-- Stylesheets -->
+	
+	<link rel="stylesheet" href="/css/main.css"/>
+	
+	
+
+	
+
+	<!-- Custom Fonts -->
+	<link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="/favicon.ico">
+	
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="js/ie/html5shiv.js"></script>
+	<script src="js/ie/html5shiv.jsrespond.min.js"></script>
+	<![endif]-->
+</head>
+
+    <body>
+
+    <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Header -->
+    <header id="header" class="alt">
+        <a href="/" class="logo"><strong>Sarah Jiang</strong> <span></span></a>
+        <nav>
+            <a href="#menu">Menu</a>
+        </nav>
+    </header>
+
+<!-- Menu -->
+    <nav id="menu">
+        <ul class="links">
+            
+                <li><a href="/">Home</a></li>
+            
+                <li><a href="/projects/project1">About Me</a></li>
+            
+                <li><a href="/projects/project2">R Project 1</a></li>
+            
+                <li><a href="/projects/project3">R Project 2</a></li>
+            
+                <li><a href="/projects/project4">R Project 3</a></li>
+            
+
+        </ul>
+        <ul class="actions vertical">
+            
+            
+        </ul>
+    </nav>
+
+        <!-- Main -->
+            <div id="main" class="alt">
+
+                
+                    <section id="one">
+                        <div class="inner">
+                            <header class="major">
+                                <h1> Omega Group plc- Pay Discrimination</h1>
+                            </header>
+                            
+                            
+
+
+<div id="omega-group-plc--pay-discrimination" class="section level1">
+<h1>Omega Group plc- Pay Discrimination</h1>
+<pre class="r"><code>omega &lt;- read_csv(here(&quot;omega.csv&quot;))
+glimpse(omega) # examine the data frame</code></pre>
+<pre><code>## Rows: 50
+## Columns: 3
+## $ salary     &lt;dbl&gt; 81894, 69517, 68589, 74881, 65598, 76840, 78800, 70033, ...
+## $ gender     &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, ...
+## $ experience &lt;dbl&gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24...</code></pre>
+<p>At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives. A quick analysis of a sample of 50 employees (of which 24 men and 26 women) revealed that the average salary for men was about 8,700 higher than for women. This seemed like a considerable difference, so it was decided that a further analysis of the company salaries was warranted.</p>
+<p>Therefore, we carried out the analysis. The objective is to find out whether there is indeed a significant difference between the salaries of men and women, and whether the difference is due to discrimination or whether it is based on another, possibly valid, determining factor.</p>
+<div id="loading-the-data" class="section level2">
+<h2>Loading the data</h2>
+<pre class="r"><code>omega &lt;- read_csv(here(&quot;omega.csv&quot;))
+glimpse(omega) # examine the data frame</code></pre>
+<pre><code>## Rows: 50
+## Columns: 3
+## $ salary     &lt;dbl&gt; 81894, 69517, 68589, 74881, 65598, 76840, 78800, 70033, ...
+## $ gender     &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, ...
+## $ experience &lt;dbl&gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24...</code></pre>
+</div>
+<div id="relationship-salary---gender" class="section level2">
+<h2>Relationship Salary - Gender ?</h2>
+<p>The data frame <code>omega</code> contains the salaries for the sample of 50 executives in the company. We will try to conclude that there is a significant difference between the salaries of the male and female executives.</p>
+<p>We first calculate summary statistics on salary by gender. Also, create and print a dataframe where, for each gender, we show the mean, SD, sample size, the t-critical, the SE, the margin of error, and the low/high endpoints of a 95% condifence interval</p>
+<pre class="r"><code># Summary Statistics of salary by gender
+mosaic::favstats (salary ~ gender, data=omega)</code></pre>
+<pre><code>##   gender   min    Q1 median    Q3   max  mean   sd  n missing
+## 1 female 47033 60338  64618 70033 78800 64543 7567 26       0
+## 2   male 54768 68331  74675 78568 84576 73239 7463 24       0</code></pre>
+<pre class="r"><code># Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+  omega %&gt;%
+  group_by(gender) %&gt;% 
+  summarise(mean_salary = mean(salary),
+            sd_salary = sd(salary),
+            sample_size=n(),
+# the t-critical value, the standard error, the margin of error, 
+            t_critical=qt(0.975,sample_size-1),
+            se_salary=(sd(salary)/sqrt(sample_size)),
+            margin_se=t_critical*se_salary,
+# and the low/high endpoints of a 95% confidence interval
+            salary_low=mean_salary-margin_se,
+            salary_high=mean_salary+margin_se)</code></pre>
+<pre><code>## # A tibble: 2 x 9
+##   gender mean_salary sd_salary sample_size t_critical se_salary margin_se
+##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt;       &lt;int&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 female      64543.     7567.          26       2.06     1484.     3056.
+## 2 male        73239.     7463.          24       2.07     1523.     3151.
+## # ... with 2 more variables: salary_low &lt;dbl&gt;, salary_high &lt;dbl&gt;</code></pre>
+<blockquote>
+<p>From the summary table, we see that the average, median, min, max and quantile salary results all points to male executives having higher salaries than female ones. Therefore, according to the summary data, it is likely that male executives have significantly higher salary than females ones. From the second data frame, we can see that the 95% CI of male and female executive salaries do not overlap with each other. This indicates that male executives indeed have higher salaries.</p>
+</blockquote>
+<p>We also ran a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money.</p>
+<pre class="r"><code># hypothesis testing using t.test() 
+t.test(salary~gender,data=omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  salary by gender
+## t = -4, df = 48, p-value = 2e-04
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -12973  -4420
+## sample estimates:
+## mean in group female   mean in group male 
+##                64543                73239</code></pre>
+<pre class="r"><code># hypothesis testing using infer package
+set.seed(1212)
+salary_in_null_world &lt;- omega %&gt;% 
+  #specify the variable of interest
+  specify(salary~gender) %&gt;% 
+  #Hypothesize a null of no difference
+  hypothesise(null=&quot;independence&quot;) %&gt;% 
+  #Generate a bunch of simulated samples
+  generate(reps = 1000, type=&quot;permute&quot;) %&gt;% 
+  #Find the mean difference of each sample
+  calculate(stat=&quot;diff in means&quot;,
+            order = c(&quot;female&quot;,&quot;male&quot;))
+
+#Visualize data and check where the observed sample difference &#39;-8700&#39; falls
+salary_in_null_world %&gt;% visualize() + 
+  shade_ci(endpoints=c(-Inf,-8700),fill = &quot;khaki&quot;)+
+  labs(title=&#39;Difference in Female and Male Employee Salary 
+in a world where there is  really no difference&#39;,
+       subtitle = &#39;Observed difference marked in green&#39;,
+        y=&#39;Count&#39;,
+        x=&#39;Average Female-Average Male&#39;
+      )+
+  theme_bw()+
+  NULL</code></pre>
+<p><img src="/projects/project4/index_files/figure-html/hypothesis_testing-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Calculate a p-value, or the probability that we would see the green line at
+
+salary_in_null_world %&gt;% 
+  get_pvalue(obs_stat = -8700,direction = &quot;both&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   p_value
+##     &lt;dbl&gt;
+## 1   0.002</code></pre>
+<blockquote>
+<p>From t-test, we can see that the 95% CI range is negative and does not include zero.The p-value 2e-4 is also very small. This indicates that male excutives indeed have higher salaries. With the simulation method, we can see from the plot that the observed difference falls in the far left of the plot. We also calculated a p-value of 0.002, which is again very small. This result indicates that male excutives indeed have higher salaries as well.</p>
+</blockquote>
+</div>
+<div id="relationship-experience---gender" class="section level2">
+<h2>Relationship Experience - Gender?</h2>
+<p>At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).</p>
+<pre class="r"><code># Summary Statistics of salary by gender
+favstats (experience ~ gender, data=omega)</code></pre>
+<pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
+## 1 female   0  0.25    3.0 14.0  29  7.38  8.51 26       0
+## 2   male   1 15.75   19.5 31.2  44 21.12 10.92 24       0</code></pre>
+<p>Based on this evidence, we try to conclude whether there is a significant difference between the experience of the male and female executives.</p>
+<pre class="r"><code># Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+omega %&gt;% 
+  group_by(gender) %&gt;% 
+  summarise(mean_experience = mean(experience),
+            sd_experience = sd(experience),
+            sample_size=n(),
+# the t-critical value, the standard error, the margin of error, 
+            t_critical=qt(0.975,sample_size-1),
+            se_experience=(sd(experience)/sqrt(sample_size)),
+            margin_se=t_critical*se_experience,
+# and the low/high endpoints of a 95% condifence interval
+            experience_low=mean_experience-margin_se,
+            experience_high=mean_experience+margin_se)</code></pre>
+<pre><code>## # A tibble: 2 x 9
+##   gender mean_experience sd_experience sample_size t_critical se_experience
+##   &lt;chr&gt;            &lt;dbl&gt;         &lt;dbl&gt;       &lt;int&gt;      &lt;dbl&gt;         &lt;dbl&gt;
+## 1 female            7.38          8.51          26       2.06          1.67
+## 2 male             21.1          10.9           24       2.07          2.23
+## # ... with 3 more variables: margin_se &lt;dbl&gt;, experience_low &lt;dbl&gt;,
+## #   experience_high &lt;dbl&gt;</code></pre>
+<blockquote>
+<p>From the summary table, we see that the average, median, min, max and quantile experience results all points to male executives having more experience than female ones. Therefore, according to the summary data, it is likely that male executives have significantly more experience than females ones. From the second data frame, we can see that the 95% CI of male and female executive experience do not overlap with each other. This indicates that male executives indeed have more experience.</p>
+</blockquote>
+<pre class="r"><code># hypothesis testing using t.test() 
+t.test(experience~gender,data=omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  experience by gender
+## t = -5, df = 43, p-value = 1e-05
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -19.35  -8.13
+## sample estimates:
+## mean in group female   mean in group male 
+##                 7.38                21.12</code></pre>
+<pre class="r"><code># hypothesis testing using infer package
+set.seed(1212)
+experience_in_null_world &lt;- omega %&gt;% 
+  #specify the variable of interest
+  specify(experience~gender) %&gt;% 
+  #Hypothesize a null of no difference
+  hypothesise(null=&quot;independence&quot;) %&gt;% 
+  #Generate a bunch of simulated samples
+  generate(reps = 1000, type=&quot;permute&quot;) %&gt;% 
+  #Find the mean difference of each sample
+  calculate(stat=&quot;diff in means&quot;,
+            order = c(&quot;female&quot;,&quot;male&quot;))
+
+#Visualize data and check where the observed sample difference falls
+obs_diff_exp=7.38-21.12
+experience_in_null_world %&gt;% visualize() + 
+  shade_ci(endpoints=c(-Inf,obs_diff_exp),fill = &quot;khaki&quot;)+
+  labs(title=&#39;Difference in Female and Male Employee Experience
+in a world where there is  really no difference&#39;,
+       subtitle = &#39;Observed difference marked in green&#39;,
+        y=&#39;Count&#39;,
+        x=&#39;Average Female-Average Male&#39;)+
+  theme_bw()+
+  NULL</code></pre>
+<p><img src="/projects/project4/index_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Calculate a p-value, or the probability that we would see the green line at
+experience_in_null_world %&gt;% 
+  get_pvalue(obs_stat = obs_diff_exp,direction = &quot;both&quot;)</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+<blockquote>
+<p>From t-test, we can see that the 95% CI range is negative and does not include zero.The p-value 1e-05 is also very small. This indicates that male excutives indeed have more experience. With the simulation method, we can see from the plot that the observed difference falls in the far left of the plot. We also calculated a p-value of almost zero, which is again very small. This result indicates that male excutives indeed have more experience as well.
+The result male executives having more experience endangers the previous result - male executives have higher salaries. For now it is possible that the salary differences result from experience gap instead gender difference.</p>
+</blockquote>
+</div>
+<div id="relationship-salary---experience" class="section level2">
+<h2>Relationship Salary - Experience ?</h2>
+<p>Someone at the meeting argues that clearly, a more thorough analysis of the relationship between salary and experience is required before any conclusion can be drawn about whether there is any gender-based salary discrimination in the company.</p>
+<p>We analysed the relationship between salary and experience and drew a scatterplot to visually inspect the data.</p>
+<pre class="r"><code>#correlation test between salary and experience
+cor.test(omega$salary,omega$experience,method=&quot;pearson&quot;)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  x and y
+## t = 9, df = 48, p-value = 2e-12
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.676 0.884
+## sample estimates:
+##   cor 
+## 0.803</code></pre>
+<pre class="r"><code>#visualize the data
+library(ggpubr)
+ggplot(omega,aes(x=experience,y=salary))+
+  theme_bw()+
+  labs(x=&quot;Experience/Year(s)&quot;,y=&quot;Salary/Dollars&quot;)+
+  geom_point()+
+  stat_smooth(method=&quot;lm&quot;,se=TRUE,color=&quot;darkblue&quot;)+
+  stat_cor(method = &quot;pearson&quot;)</code></pre>
+<p><img src="/projects/project4/index_files/figure-html/salary_exp_scatter-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>There is an obvious positive correlation between experience and salary, with the correlation value as high as 0.8. The degree of freedom is 48 and p-value is 2.257e-12 &lt; 0.05(the p-value under df=48).Thus, the correlation between the two variables is significant.</p>
+</blockquote>
+</div>
+<div id="check-correlations-between-the-data" class="section level2">
+<h2>Check correlations between the data</h2>
+<p>Lastly we used <code>GGally:ggpairs()</code> to create a scatterplot and correlation matrix.</p>
+<pre class="r"><code>omega %&gt;% 
+  select(gender, experience, salary) %&gt;% #order variables they will appear in ggpairs()
+  ggpairs(aes(colour=gender, alpha = 0.3))+
+  theme_bw()</code></pre>
+<p><img src="/projects/project4/index_files/figure-html/ggpairs-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>The group of females as a whole has less experience in work compared to the group of males. And there exists a significant positive correlation between experience and salary both in females and males. Thus, the gap between avarage salary of males and females is mostly caused by the experience difference group.
+From the scatterplot, we can see that females with similar experience to males tend to have similar salaries either. We can infer that discrimination is not the major, at least not only factor, that results in the salary difference in the two groups.</p>
+</blockquote>
+</div>
+</div>
+
+                        </div>
+                    </section>
+            <!-- Disqus Inject -->
+                
+            </div>
+            
+        <!-- Footer -->
+            
+                <!-- Footer -->
+    <footer id="footer">
+        <div class="inner">
+            <ul class="icons">
+                
+                    <li><a href="https://www.facebook.com/sarahjya/" class="icon alt fa-facebook" target="_blank"><span class="label">Facebook</span></a></li>
+                
+                    <li><a href="https://www.instagram.com/sarahkkjya/" class="icon alt fa-instagram" target="_blank"><span class="label">Instagram</span></a></li>
+                
+                    <li><a href="https://github.com/sarahjya" class="icon alt fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+                
+                    <li><a href="https://www.linkedin.com/in/yian-jiang-6ba028171/?locale=en_US" class="icon alt fa-linkedin" target="_blank"><span class="label">LinkedIn</span></a></li>
+                
+            </ul>
+            <ul class="copyright">
+                <li>&copy; Sarah Jiang</li>
+                
+            </ul>
+        </div>
+    </footer>
+
+            
+        </div>
+
+    <!-- Scripts -->
+        <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/jquery.scrolly.min.js"></script>
+    <script src="/js/jquery.scrollex.min.js"></script>
+    <script src="/js/skel.min.js"></script>
+    <script src="/js/util.js"></script>
+
+    
+
+    <!-- Main JS -->
+    <script src="/js/main.js"></script>
+
+    
+
+    
+
+    </body>
+</html>
