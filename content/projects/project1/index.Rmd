@@ -51,6 +51,12 @@ library(knitr)
 ```
 
 
+```{r add_my_new_picture, echo=FALSE, out.width="90%"}
+knitr::include_graphics("\img\blogs\pic08.jpg",error = FALSE)
+
+```
+
+
 #About Me
 
 Hi Everyone! I am Sarah (Yian) Jiang. I am currently studying in Masters in Financial Analysis program at London Business School. I acquired a bachelor degree from Tsinghua University in accounting. I am currently pursuing a job in product management.
@@ -58,9 +64,45 @@ Hi Everyone! I am Sarah (Yian) Jiang. I am currently studying in Masters in Fina
 To let you know more about me, I have attached my resume below. You can also reach out to me thorough the contacts shown in the homepage.
 
 
-```{r add_my_new_picture, echo=FALSE, out.width="90%"}
-knitr::include_graphics("/img/cv.jpg",error = FALSE)
+#Work Experience
 
-```
+##Sinovation Ventures
+•	Launched new features in the live show product through the cooperation with UI designers and software developers; independently designed the product features, composed product requirement documents and improved the user experience
+•	Improved the engagement rate by 20% and promoted the webcaster following volume by 50% through developing the strategies of pop-up window display, which successfully activated the users
+•	Applied SQL to track, retrieve, and analyze data thoroughly in the product life-time cycle in order to evaluate past performance, set the priorities for different product requirements and avoid product failures
+
+
+##Shanghai Fosun High Technology (Group) Co., Ltd.     
+•	Analyzed 30 target SOEs and private enterprises in consumer goods and energy industries in secondary and primary markets
+•	Be responsible for a project of onshore & offshore wind power station, independently drafted 20 secondary market investment materials, which included industry analysis, financial analysis, competition analysis, investment highlights and risks
+•	Worked on a frozen food supply chain project, conducted interviews as the main interviewer, inquired the management teams about financial situations & business models, whose results were used for Investment Committee’s internal discussion
+
+##So-Young International Inc.
+•	Launched new features in the live show product through the cooperation with UI designers and software developers; independently designed the product features, composed product requirement documents and improved the user experience
+•	Improved the engagement rate by 20% and promoted the webcaster following volume by 50% through developing the strategies of pop-up window display, which successfully activated the users
+
+
+#LEADERSHIP AND ACHIEVEMENTS 
+
+##Tsinghua SEM Student Union
+•	Led School of Economics and Management to win the 1st place in Tsinghua Ma Yuehan Sports Cup for 2 consecutive years with an improvement of 20% compared with previous years, devoted 30 hours per week to 10 sports teams’ management
+•	Led the SEM Swimming Team to win the 2nd (the best ranking in 9 years) in Tsinghua Ma Yuehan Sports Cup with 145 points
+•	Recruited 80 international exchange students to 10 SEM sports teams through speech delivering and personal connections
+
+
+##Tsinghua SEM Career Development Club
+•	Founded, designed and implemented Consulting Elite Program, invited 10 mentors from top-tier consulting firms and selected 5 mentees to the program; held CV modification, mock interview sessions, eventually received highly positive feedback 
+•	Edited Career Insider; held responsible for compiling VC career path segment and updating consulting career path segment 
+
+
+#ADDITIONAL INFORMATION
+Languages: Mandarin (native), English (fluent), TOEFL110/120
+Skills: Proficient in using financial databases (Wind, Bloomberg, Capital IQ), familiar with financial modeling
+Interests: Running (won the 3rd place in the age group and the 46th place in the female group in Beijing Half Marathon); solo traveling (solo traveled to Scandinavia and Cuba, made friends with travelers from 20 different countries)
+
+
+
+
+
 
 

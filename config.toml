@@ -191,7 +191,7 @@ disqusShortname = ""
   # Footer section
   [params.footer]
     enable = true
-    copyright = "Company Name"
+    copyright = "Sarah Jiang"
 
     # Uses font awesome icons
     #[[params.footer.social]]
